@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deteksi Penyakit Tanaman</title>
+<style>
+ body{background:#e8f5e9;font-family:Arial;margin:0;padding:0;color:#1b5e20}
+ header{background:#2e7d32;color:#fff;padding:20px;text-align:center;font-size:24px}
+ .container{width:90%;max-width:850px;margin:20px auto;background:#fff;padding:20px;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+ select,input{width:100%;padding:12px;margin:10px 0;border:2px solid #81c784;border-radius:8px}
+ button{width:100%;padding:12px;background:#43a047;color:#fff;border:none;border-radius:8px;font-size:16px;font-weight:bold;cursor:pointer}
+ button:hover{background:#2e7d32}
+ .result-box{background:#f1f8e9;padding:15px;border-radius:10px;margin-top:20px;border-left:5px solid #66bb6a}
+</style>
+</head>
+<body>
+<header>Deteksi Penyakit Tanaman & Kebutuhan Pupuk</header>
+<div class="container">
+ <h2>Jenis Tanaman</h2>
+ <select id="tanaman">
+  <option value="kakao">Kakao</option>
+  <option value="sawit">Kelapa Sawit</option>
+  <option value="karet">Karet</option>
+  <option value="kopi">Kopi</option>
+  <option value="teh">Teh</option>
+  <option value="tebu">Tebu</option>
+  <option value="tembakau">Tembakau</option>
+ </select>
+
+ <h2>Kondisi Tanaman / Penyakit</h2>
+ <select id="kondisi"></select>
+
+ <h2>Luas Lahan (ha)</h2>
+ <input type="number" id="lahan" placeholder="contoh: 3">
+
+ <button onclick="deteksi()">Deteksi</button>
+ <div id="hasil" class="result-box" style="display:none"></div>
+</div>
+
+<script>
+const penyakitData={
+ kakao:{"VSD":{"pengendalian":"Pangkas bagian terserang, semprot fungisida tembaga.","pupuk":"NPK 15-15-15, Pupuk kandang"},"Busuk Buah":{"pengendalian":"Sanitasi buah busuk, fungisida fosfat.","pupuk":"Dolomit, NPK tinggi P"},"Jamur Upas":{"pengendalian":"Kupas kulit terserang, fungisida tembaga.","pupuk":"KCl, Kompos"},"Akar Putih":{"pengendalian":"Cabut tanaman terinfeksi, Trichoderma.","pupuk":"NPK, Kompos"}},
+ sawit:{"Ganoderma":{"pengendalian":"Eradikasi, Trichoderma.","pupuk":"NPK Mg, Dolomit"},"Leaf spot":{"pengendalian":"Fungisida mankozeb.","pupuk":"ZA, Pupuk daun"},"Antraknosa":{"pengendalian":"Sanitasi, fungisida.","pupuk":"TSP, Kompos"}},
+ karet:{"Oidium":{"pengendalian":"Fungisida sulfur.","pupuk":"NPK, Dolomit"},"Corynespora":{"pengendalian":"Fungisida difenokonazol.","pupuk":"KCl, Organik"},"Akar Putih":{"pengendalian":"Cabut tanaman, Trichoderma.","pupuk":"Kompos, NPK"}},
+ kopi:{"Karat Daun":{"pengendalian":"Fungisida tembaga.","pupuk":"NPK, Urea"},"Jamur Akar":{"pengendalian":"Perbaikan drainase, Trichoderma.","pupuk":"Kompos, Dolomit"},"Antraknosa":{"pengendalian":"Sanitasi, fungisida.","pupuk":"ZA, NPK P tinggi"}},
+ teh:{"Blister blight":{"pengendalian":"Fungisida tembaga.","pupuk":"NPK, Kompos"},"Grey blight":{"pengendalian":"Sanitasi, fungisida.","pupuk":"KCl, Urea"},"Red rust":{"pengendalian":"Fungisida sulfur.","pupuk":"NPK, Kompos"}},
+ tebu:{"Powdery mildew":{"pengendalian":"Fungisida sulfur cair.","pupuk":"ZA, NPK"},"Lodoh":{"pengendalian":"Perbaiki drainase, sanitasi.","pupuk":"Dolomit, Kompos"}},
+ tembakau:{"Layu Fusarium":{"pengendalian":"Rotasi tanaman, solarisasi.","pupuk":"Kompos, NPK"},"Busuk Daun":{"pengendalian":"Fungisida klorotalonil.","pupuk":"Urea, KCl"}}
+};
+
+function updatePenyakit(){
+ let t=document.getElementById("tanaman").value;
+ let s=document.getElementById("kondisi");
+ s.innerHTML="";
+ Object.keys(penyakitData[t]).forEach(p=>{
+  let o=document.createElement("option");
+  o.value=p; o.textContent=p; s.appendChild(o);
+ });
+}
+
+updatePenyakit();
+document.getElementById("tanaman").addEventListener("change",updatePenyakit);
+
+function deteksi(){
+ let tanaman=document.getElementById("tanaman").value;
+ let kondisi=document.getElementById("kondisi").value;
+ let lahan=parseFloat(document.getElementById("lahan").value);
+ if(!lahan||lahan<=0){alert("Masukkan luas lahan!");return;}
+ let d=penyakitData[tanaman][kondisi];
+ let pupukKebutuhan=lahan*50;
+
+ document.getElementById("hasil").style.display="block";
+ document.getElementById("hasil").innerHTML=`<h3>Hasil:</h3>
+ <b>Tanaman:</b> ${tanaman.toUpperCase()}<br>
+ <b>Penyakit:</b> ${kondisi}<br>
+ <b>Pengendalian:</b> ${d.pengendalian}<br>
+ <b>Jenis Pupuk:</b> ${d.pupuk}<br>
+ <b>Kebutuhan Pupuk:</b> ${pupukKebutuhan} kg`;
+}
+</script>
+</body>
+</html>
